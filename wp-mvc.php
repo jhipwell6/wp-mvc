@@ -7,6 +7,7 @@
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
+ * Primary Branch: main
  *
  * Text Domain: wp-mvc
  */
