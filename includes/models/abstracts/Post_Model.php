@@ -161,7 +161,7 @@ abstract class Post_Model extends Abstract_Model
 	private function save_wp_prop( $prop, $value, $wp_prop )
 	{
 		$prop = $this->get_wp_prop( $wp_prop );
-		$getter = "get_{$prop}";
+		$getter = $this->get_getter( $prop );
 		if ( $this->{$getter}() != '' ) {
 			$args = array(
 				'ID' => $this->get_id(),
@@ -205,7 +205,7 @@ abstract class Post_Model extends Abstract_Model
 			if ( is_null( $value ) || $prop == 'id' ) {
 				continue;
 			}
-			$setter = "set_$prop";
+			$setter = $this->get_setter( $prop );
 
 			if ( is_callable( array( $this, $setter ) ) ) {
 				$this->{$setter}( $value );
@@ -397,6 +397,16 @@ abstract class Post_Model extends Abstract_Model
 	/*
 	 * Helpers
 	 */
+	 
+	public function has_prop( $prop )
+	{
+		return property_exists( $this, $prop ) || array_key_exists( $prop, $this->get_aliases() );
+	}
+	
+	private function map_property( $prop )
+	{
+		return array_key_exists( $prop, $this->get_aliases() ) ? $this->aliases[ $prop ] : $prop;
+	}
 
 	private function map_properties( $props )
 	{
@@ -461,7 +471,7 @@ abstract class Post_Model extends Abstract_Model
 	protected function get_meta( $prop )
 	{
 		// optional ACF support
-		if ( function_exists( 'get_field' ) ) {
+		if ( function_exists( 'get_field' ) && ! $this->is_post_meta_prop( $prop ) ) {
 			return get_field( $prop, $this->get_id() );
 		} else {
 			return get_post_meta( $this->get_id(), $prop, true );
@@ -470,7 +480,7 @@ abstract class Post_Model extends Abstract_Model
 
 	protected function can_save_meta( $prop, $value )
 	{
-		$setter = "set_$prop";
+		$setter = $this->get_setter( $prop );
 		return null !== $value && is_callable( array( $this, $setter ) );
 	}
 
@@ -485,12 +495,17 @@ abstract class Post_Model extends Abstract_Model
 			}
 
 			// optional ACF support
-			if ( function_exists( 'update_field' ) ) {
+			if ( function_exists( 'update_field' ) && ! $this->is_post_meta_prop( $prop ) ) {
 				update_field( $prop, $value, $this->get_id() );
 			} else {
 				update_post_meta( $this->get_id(), $prop, $value );
 			}
 		}
+	}
+	
+	private function is_post_meta_prop( $prop )
+	{
+		return strpos( $prop, '_' ) === 0;
 	}
 
 	/*

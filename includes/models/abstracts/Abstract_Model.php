@@ -29,7 +29,7 @@ abstract class Abstract_Model
 		
 		if ( null === $this->{$prop} || ( is_array( $this->{$prop} ) && empty( $this->{$prop} ) ) ) {
 			if ( is_callable( array( $this, 'is_wp_prop' ) ) && $this->is_wp_prop( $prop ) ) {
-				$getter = "get_{$prop}";
+				$getter = $this->get_getter( $prop );
 				if ( is_callable( array( $this, $getter ) ) ) {
 					$this->{$prop} = $this->{$getter}();
 				}
@@ -43,7 +43,7 @@ abstract class Abstract_Model
 	protected function get_props()
 	{
 		foreach ( get_object_vars( $this ) as $prop => $value ) {
-			$getter = "get_{$prop}";
+			$getter = $this->get_getter( $prop );
 			if ( is_callable( array( $this, $getter ) ) ) {
 				$this->{$getter}();
 			}
@@ -55,9 +55,18 @@ abstract class Abstract_Model
 		return property_exists( $this, $prop );
 	}
 	
+	protected function get_getter( $prop )
+	{
+		return is_callable( array( $this, 'map_property' ) ? 'get_' . $this->map_property( $prop ) : 'get_' . $prop;
+	}
+	
+	protected function get_setter( $prop )
+	{
+		return is_callable( array( $this, 'map_property' ) ? 'set_' . $this->map_property( $prop ) : 'set_' . $prop;
+	}
+	
 	public function to_array( $exclude = array() )
 	{
-//		$this->get_props();
 		$exclusions = wp_parse_args( $exclude, $this->get_hidden() );
 		return array_diff_key( get_object_vars( $this ), array_flip( $exclusions ) );
 	}

@@ -3,7 +3,7 @@
  * Plugin Name: WP MVC
  * Plugin URI: https://snowberrymedia.com/
  * Description: WP MVC Framework
- * Version: 0.2
+ * Version: 0.2.1
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
@@ -23,7 +23,7 @@ final class WP_MVC
     /**
      * @var string
      */
-    public $version = '0.2';
+    public $version = '0.2.1';
 	
 	/**
      * @var string
