@@ -6,6 +6,7 @@
  * Version: 0.1
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
+ * GitHub Plugin: jhipwell6/wp-mvc
  *
  * Text Domain: wp-mvc
  */
