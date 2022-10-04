@@ -397,15 +397,15 @@ abstract class Post_Model extends Abstract_Model
 	/*
 	 * Helpers
 	 */
-	 
+
 	public function has_prop( $prop )
 	{
 		return property_exists( $this, $prop ) || array_key_exists( $prop, $this->get_aliases() );
 	}
-	
+
 	private function map_property( $prop )
 	{
-		return array_key_exists( $prop, $this->get_aliases() ) ? $this->aliases[ $prop ] : $prop;
+		return array_key_exists( $prop, $this->get_aliases() ) ? $this->aliases[$prop] : $prop;
 	}
 
 	private function map_properties( $props )
@@ -502,7 +502,7 @@ abstract class Post_Model extends Abstract_Model
 			}
 		}
 	}
-	
+
 	private function is_post_meta_prop( $prop )
 	{
 		return strpos( $prop, '_' ) === 0;
