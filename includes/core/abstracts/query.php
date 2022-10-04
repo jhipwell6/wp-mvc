@@ -1,9 +1,9 @@
 <?php
+
 namespace WP_MVC\Core\Abstracts;
 
-if ( ! defined('ABSPATH') )
-    exit;
-
+if ( ! defined( 'ABSPATH' ) )
+	exit;
 
 abstract class Query
 {
@@ -26,7 +26,7 @@ abstract class Query
 		}
 		return $this;
 	}
-	
+
 	public function init( $args = array() )
 	{
 		$this->query_vars = wp_parse_args( $args, $this->get_default_query_vars() );
@@ -52,8 +52,8 @@ abstract class Query
 	 */
 	public function get( $query_var, $default = '' )
 	{
-		if ( isset( $this->query_vars[ $query_var ] ) ) {
-			return $this->query_vars[ $query_var ];
+		if ( isset( $this->query_vars[$query_var] ) ) {
+			return $this->query_vars[$query_var];
 		}
 		return $default;
 	}
@@ -66,9 +66,9 @@ abstract class Query
 	 */
 	public function set( $query_var, $value )
 	{
-		$this->query_vars[ $query_var ] = $value;
+		$this->query_vars[$query_var] = $value;
 	}
-	
+
 	/**
 	 * Get the default allowed query vars.
 	 *
@@ -77,20 +77,18 @@ abstract class Query
 	protected function get_default_query_vars()
 	{
 		return array(
-			'name'           => '',
-			'parent'         => '',
+			'name' => '',
+			'parent' => '',
 			'parent_exclude' => '',
-			'exclude'        => '',
-
-			'limit'          => get_option( 'posts_per_page' ),
-			'page'           => 1,
-			'offset'         => '',
-			'paginate'       => false,
-
-			'order'          => 'DESC',
-			'orderby'        => 'date',
-
-			'return'         => 'objects',
+			'exclude' => '',
+			'limit' => get_option( 'posts_per_page' ),
+			'page' => 1,
+			'offset' => '',
+			'paginate' => false,
+			'order' => 'DESC',
+			'orderby' => 'date',
+			'return' => 'objects',
 		);
 	}
+
 }

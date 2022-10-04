@@ -1,13 +1,14 @@
 <?php
+
 namespace WP_MVC\Core;
+
 use \ActionScheduler;
 
-if ( ! defined('ABSPATH') )
-    exit;
+if ( ! defined( 'ABSPATH' ) )
+	exit;
 
 class Action_Queue
 {
-
 	/**
 	 * The single instance of the queue.
 	 *
@@ -16,17 +17,17 @@ class Action_Queue
 	protected static $instance = null;
 
 	/**
-     * Static Singleton Factory Method
-     * @return self returns a single instance of our class
-     */
-    public static function instance()
+	 * Static Singleton Factory Method
+	 * @return self returns a single instance of our class
+	 */
+	public static function instance()
 	{
-        if ( ! isset( self::$instance ) ) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
-	
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self;
+		}
+		return self::$instance;
+	}
+
 	/**
 	 * Enqueue an action to run one time, as soon as possible
 	 *
@@ -172,9 +173,10 @@ class Action_Queue
 	{
 		return as_get_scheduled_actions( $args, $return_format );
 	}
-	
+
 	public function delete_action( $action_id )
 	{
 		return ActionScheduler::store()->delete_action( $action_id );
 	}
+
 }
