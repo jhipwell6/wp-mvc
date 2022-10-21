@@ -283,7 +283,7 @@ abstract class Post_Model extends Abstract_Model
 		$args = array(
 			'post_type' => $this->get_post_type(),
 			'p' => $id,
-			'post_status' => 'any'
+			'post_status' => $this->get_public_statuses()
 		);
 		$query = new \WP_Query( $args );
 		$post_object = ( ! empty( $query->posts[0] ) ) ? $query->posts[0] : false;
@@ -374,7 +374,7 @@ abstract class Post_Model extends Abstract_Model
 		$posts = get_posts( array(
 			'post_type' => $this->get_post_type(),
 			'posts_per_page' => 1,
-			'post_status' => 'any',
+			'post_status' => $this->get_public_statuses(),
 			'meta_key' => $this->get_unique_key(),
 			'meta_value' => $unique_value
 			) );
@@ -546,4 +546,8 @@ abstract class Post_Model extends Abstract_Model
 		return $formatter->formatCurrency( floatval( $value ), 'USD' );
 	}
 
+	private function get_public_statuses()
+	{
+		return array_values( get_post_stati( array( 'exclude_from_search' => false ) ) );
+	}
 }
