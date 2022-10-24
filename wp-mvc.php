@@ -4,7 +4,7 @@
  * Plugin Name: WP MVC
  * Plugin URI: https://snowberrymedia.com/
  * Description: WP MVC Framework
- * Version: 0.2.1
+ * Version: 0.2.2
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.2.1';
+		public $version = '0.2.2';
 
 		/**
 		 * @var string
@@ -66,8 +66,6 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		public function __construct()
 		{
 			$this->define_constants();
-
-			// require autoload class here if exists
 
 			/**
 			 * Once plugins are loaded, initialize
@@ -153,6 +151,9 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			include_once $this->plugin_path() . '/includes/core/interfaces/service.php';
 			include_once $this->plugin_path() . '/includes/core/abstracts/service.php';
 			include_once $this->plugin_path() . '/includes/core/abstracts/query.php';
+			
+			// Controllers
+			include_once $this->plugin_path() . '/includes/contollers/abstracts/mvc-importer.php';
 
 			// Libraries
 			include_once $this->plugin_path() . '/libraries/action-scheduler/action-scheduler.php';
@@ -174,6 +175,16 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		public function limit_action_queue_batches( $batches )
 		{
 			return 2;
+		}
+		
+		/**
+		 * Get queue instance.
+		 *
+		 * @return Action_Queue
+		 */
+		public function queue()
+		{
+			return \WP_MVC\Core\Action_Queue::instance();
 		}
 
 		/**
@@ -236,5 +247,3 @@ function WP_MVC()
 {
 	return WP_MVC::instance();
 }
-
-WP_MVC();
