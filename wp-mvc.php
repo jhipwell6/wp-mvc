@@ -247,3 +247,5 @@ function WP_MVC()
 {
 	return WP_MVC::instance();
 }
+
+WP_MVC();
