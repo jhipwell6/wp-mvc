@@ -104,12 +104,10 @@ abstract class Post_Model extends Abstract_Model
 	public function get_post_content( $apply_filters = false )
 	{
 		$prop = $this->get_wp_prop( 'post_content' );
-		if ( null === $this->{$prop} ) {
-			if ( $apply_filters ) {
-				$this->{$prop} = apply_filters( 'the_content', get_the_content( null, false, $this->get_id() ) );
-			} else {
-				$this->{$prop} = get_the_content( null, false, $this->get_id() );
-			}
+		if ( $apply_filters ) {
+			$this->{$prop} = apply_filters( 'the_content', get_the_content( null, false, $this->get_id() ) );
+		} else {
+			$this->{$prop} = get_the_content( null, false, $this->get_id() );
 		}
 		return $this->{$prop};
 	}
