@@ -70,17 +70,27 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			/**
 			 * Once plugins are loaded, initialize
 			 */
-			add_action( 'plugins_loaded', array( $this, 'setup' ), -10 );
+			add_action( 'plugins_loaded', array( $this, 'setup' ), -20 );
+			add_action( 'plugins_loaded', array( $this, 'late_setup' ), -10 );
 		}
 
 		/**
-		 * Setup needed includes and actions  for plugin
-		 * @hooked plugins_loaded
+		 * Setup needed includes and actions for plugin
+		 * @hooked plugins_loaded -20
 		 */
 		public function setup()
 		{
 			$this->includes();
 			$this->init_hooks();
+		}
+		
+		/**
+		 * Setup optional includes and actions for plugin
+		 * @hooked plugins_loaded -10
+		 */
+		public function late_setup()
+		{
+			$this->optional_includes();
 		}
 
 		/**
@@ -154,14 +164,24 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			
 			// Controllers
 			include_once $this->plugin_path() . '/includes/contollers/abstracts/mvc-importer.php';
-
+			
 			// Libraries
-			include_once $this->plugin_path() . '/libraries/action-scheduler/action-scheduler.php';
 			include_once $this->plugin_path() . '/libraries/league-csv/autoload.php';
 			spl_autoload_register( require $this->plugin_path() . '/libraries/json-machine/autoloader.php' );
 
 			// Other Libraries
 			include_once $this->plugin_path() . '/libraries/autoload.php';
+		}
+		
+		/**
+		 * Myabe include optional files.
+		 */
+		public function optional_includes()
+		{
+			// Libraries
+			if ( defined( WPMVC_ACTION_SCHEDULER_IS_ENABLED ) && WPMVC_ACTION_SCHEDULER_IS_ENABLED ) {
+				include_once $this->plugin_path() . '/libraries/action-scheduler/action-scheduler.php';
+			}
 		}
 
 		/**
