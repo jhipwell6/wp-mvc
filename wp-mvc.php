@@ -4,7 +4,7 @@
  * Plugin Name: WP MVC
  * Plugin URI: https://snowberrymedia.com/
  * Description: WP MVC Framework
- * Version: 0.2.3
+ * Version: 0.2.4
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.2.3';
+		public $version = '0.2.4';
 
 		/**
 		 * @var string
@@ -41,7 +41,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		 * @var WP_MVC The single instance of the class
 		 * @since 0.1
 		 */
-		protected static $_instance = null;
+		protected static $instance = null;
 
 		/**
 		 * Main Instance
@@ -54,10 +54,10 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		 */
 		public static function instance()
 		{
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		/**
@@ -144,6 +144,9 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			// Helpers
 			include_once $this->plugin_path() . '/includes/helpers/general-functions.php';
 			include_once $this->plugin_path() . '/includes/helpers/formatting-functions.php';
+			
+			// Traits
+			include_once $this->plugin_path() . '/includes/traits/import-trait.php';
 
 			// Models
 			// // WP_MVC\Models\Abstracts\Abstract_Model
@@ -163,7 +166,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			include_once $this->plugin_path() . '/includes/core/abstracts/query.php';
 			
 			// Controllers
-			include_once $this->plugin_path() . '/includes/contollers/abstracts/mvc-importer.php';
+			include_once $this->plugin_path() . '/includes/contollers/abstracts/mvc-controller-registry.php';
 			
 			// Libraries
 			include_once $this->plugin_path() . '/libraries/league-csv/autoload.php';
