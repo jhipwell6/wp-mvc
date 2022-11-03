@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_MVC\Controllers;
+namespace WP_MVC\Controllers\Abstracts;
 
 if ( ! defined( 'ABSPATH' ) )
 	exit;
