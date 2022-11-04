@@ -132,7 +132,7 @@ abstract class Post_Model extends Abstract_Model
 	public function save_post_title( $value )
 	{
 		$prop = $this->get_wp_prop( 'post_title' );
-		$post_id = $this->save_wp_prop( $prop, $value, 'post_title' );
+		$post_id = $this->save_wp_prop( $value, 'post_title' );
 		if ( $post_id ) {
 			$this->{$prop} = get_the_title( $post_id );
 		}
@@ -141,7 +141,7 @@ abstract class Post_Model extends Abstract_Model
 	public function save_post_content( $value )
 	{
 		$prop = $this->get_wp_prop( 'post_content' );
-		$post_id = $this->save_wp_prop( $prop, $value, 'post_content' );
+		$post_id = $this->save_wp_prop( $value, 'post_content' );
 		if ( $post_id ) {
 			$this->{$prop} = apply_filters( 'the_content', get_the_content( null, false, $post_id ) );
 		}
@@ -150,17 +150,15 @@ abstract class Post_Model extends Abstract_Model
 	public function save_post_date( $value, $return_format = '' )
 	{
 		$prop = $this->get_wp_prop( 'post_date' );
-		$post_id = $this->save_wp_prop( $prop, $value, 'post_date' );
+		$post_id = $this->save_wp_prop( $value, 'post_date' );
 		if ( $post_id ) {
 			$this->{$prop} = get_the_date( $return_format, $post_id );
 		}
 	}
 
-	private function save_wp_prop( $prop, $value, $wp_prop )
+	private function save_wp_prop( $value, $wp_prop )
 	{
-		$prop = $this->get_wp_prop( $wp_prop );
-		$getter = $this->get_getter( $prop );
-		if ( $this->{$getter}() != '' ) {
+		if ( $value != '' ) {
 			$args = array(
 				'ID' => $this->get_id(),
 				$wp_prop => $value
@@ -168,8 +166,7 @@ abstract class Post_Model extends Abstract_Model
 			if ( $wp_prop == 'post_date' ) {
 				$args['post_date_gmt'] = get_gmt_from_date( $value );
 			}
-			$post_id = wp_update_post( $args );
-			return $post_id;
+			return wp_update_post( $args );
 		}
 		return false;
 	}
