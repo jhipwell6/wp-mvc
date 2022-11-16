@@ -4,7 +4,7 @@
  * Plugin Name: WP MVC
  * Plugin URI: https://snowberrymedia.com/
  * Description: WP MVC Framework
- * Version: 0.2.5
+ * Version: 0.2.6
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.2.5';
+		public $version = '0.2.6';
 
 		/**
 		 * @var string
@@ -166,7 +166,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			include_once $this->plugin_path() . '/includes/core/abstracts/query.php';
 			
 			// Controllers
-			include_once $this->plugin_path() . '/includes/contollers/abstracts/mvc-controller-registry.php';
+			include_once $this->plugin_path() . '/includes/controllers/abstracts/mvc-controller-registry.php';
 			
 			// Libraries
 			include_once $this->plugin_path() . '/libraries/league-csv/autoload.php';
