@@ -4,7 +4,7 @@
  * Plugin Name: WP MVC
  * Plugin URI: https://snowberrymedia.com/
  * Description: WP MVC Framework
- * Version: 0.2.6
+ * Version: 0.2.6.1
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.2.6';
+		public $version = '0.2.6.1';
 
 		/**
 		 * @var string
@@ -182,7 +182,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		public function optional_includes()
 		{
 			// Libraries
-			if ( defined( WPMVC_ACTION_SCHEDULER_IS_ENABLED ) && WPMVC_ACTION_SCHEDULER_IS_ENABLED ) {
+			if ( defined( 'WPMVC_ACTION_SCHEDULER_IS_ENABLED' ) && WPMVC_ACTION_SCHEDULER_IS_ENABLED ) {
 				include_once $this->plugin_path() . '/libraries/action-scheduler/action-scheduler.php';
 			}
 		}
