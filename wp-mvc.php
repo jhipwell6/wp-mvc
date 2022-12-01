@@ -147,6 +147,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			
 			// Traits
 			include_once $this->plugin_path() . '/includes/traits/import-trait.php';
+			include_once $this->plugin_path() . '/includes/traits/cacheable-trait.php';
 
 			// Models
 			// // WP_MVC\Models\Abstracts\Abstract_Model
