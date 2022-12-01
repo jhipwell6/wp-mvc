@@ -20,12 +20,12 @@ trait Import_Trait
 //		),
 //	);
 	
-	public function __construct()
+	public function init_importer()
 	{
 		add_action( 'init', array( $this, 'set_import_schedules' ) );
 	}
 
-	public function set_import_schedule()
+	public function set_import_schedules()
 	{
 		if ( empty( $this->importer_config ) ) {
 			return false;
@@ -34,7 +34,7 @@ trait Import_Trait
 		foreach ( $this->importer_config as $hook => $import ) {
 			$results = WP_MVC()->queue()->search( array( 'hook' => $hook, 'status' => ActionScheduler_Store::STATUS_PENDING ) );
 			if ( empty( $results ) ) {
-				WP_MVC()->queue()->schedule_recurring( $import['timestamp'], $import['interval'], $hook, array(), $import['group'] );
+				WP_MVC()->queue()->schedule_recurring( strtotime( $import['timestamp'] ), $import['interval'], $hook, array(), $import['group'] );
 			}
 
 			$this->garbage_collection( $results );
