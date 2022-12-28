@@ -115,17 +115,13 @@ abstract class Post_Model extends Abstract_Model
 	public function get_post_date( $format = '' )
 	{
 		$prop = $this->get_wp_prop( 'post_date' );
-		if ( null === $this->{$prop} ) {
-			$this->{$prop} = get_the_date( $format, $this->get_id() );
-		}
+		$this->{$prop} = get_the_date( $format, $this->get_id() );
 		return $this->{$prop};
 	}
 
 	public function get_updated_at( $format = 'Y-m-d h:i:s' )
 	{
-		if ( null === $this->updated_at ) {
-			$this->updated_at = get_the_modified_time( $format, $this->get_id() );
-		}
+		$this->updated_at = get_the_modified_time( $format, $this->get_id() );
 		return $this->updated_at;
 	}
 
