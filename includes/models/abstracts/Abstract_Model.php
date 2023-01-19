@@ -50,6 +50,11 @@ abstract class Abstract_Model
 			}
 		}
 	}
+	
+	public function get_property_keys()
+	{
+		return array_keys( $this->to_array() );
+	}
 
 	public function has_prop( $prop )
 	{
@@ -79,10 +84,10 @@ abstract class Abstract_Model
 
 	public function to_csv_array( $include = array() )
 	{
-		$include = empty( $include ) ? get_object_vars( $this ) : $include;
+		$include = empty( $include ) ? $this->get_property_keys() : $include;
 		$arr = $this->to_array();
-		return array_map( function ( $value ) use ( $arr ) {
-			return $arr[$value];
+		return array_map( function( $key ) use ( $arr ) {
+			return is_array( $arr[ $key ] ) ? implode( '|', $arr[ $key ] ) : $arr[ $key ];
 		}, $include );
 	}
 

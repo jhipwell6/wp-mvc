@@ -11,14 +11,19 @@ if ( ! defined( 'ABSPATH' ) )
 trait Import_Trait
 {
 	
-	// example
-//	protected $importer_config = array(
-//		'wp_mvc/import_schedule' => array(
-//			'timestamp' => 'strtotime( "tomorrow + 8 hours" )',
-//			'interval' => DAY_IN_SECONDS,
-//			'group' => 'wp-mvc-import-schedule',
-//		),
-//	);
+	/**
+	 * 
+	 * Example $importer_config
+	 * 
+	 * protected $importer_config = array(
+	 * 	'wp_mvc/import_schedule' => array(
+	 * 		'timestamp' => 'strtotime( "tomorrow + 8 hours" )',
+	 * 		'interval' => DAY_IN_SECONDS,
+	 * 		'group' => 'wp-mvc-import-schedule',
+	 * 	),
+	 * );
+	 * 
+	 */
 	
 	public function init_importer()
 	{

@@ -4,7 +4,7 @@
  * Plugin Name: WP MVC
  * Plugin URI: https://snowberrymedia.com/
  * Description: WP MVC Framework
- * Version: 0.2.7.1
+ * Version: 0.2.8
  * Author: Snowberry Media
  * Author URI: https://snowberrymedia.com/
  * GitHub Plugin URI: jhipwell6/wp-mvc
@@ -23,7 +23,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		/**
 		 * @var string
 		 */
-		public $version = '0.2.7.1';
+		public $version = '0.2.8';
 
 		/**
 		 * @var string
@@ -83,7 +83,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			$this->includes();
 			$this->init_hooks();
 		}
-		
+
 		/**
 		 * Setup optional includes and actions for plugin
 		 * @hooked plugins_loaded -10
@@ -144,9 +144,10 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			// Helpers
 			include_once $this->plugin_path() . '/includes/helpers/general-functions.php';
 			include_once $this->plugin_path() . '/includes/helpers/formatting-functions.php';
-			
+
 			// Traits
 			include_once $this->plugin_path() . '/includes/traits/import-trait.php';
+			include_once $this->plugin_path() . '/includes/traits/csv-import-export-trait.php';
 			include_once $this->plugin_path() . '/includes/traits/cacheable-trait.php';
 
 			// Models
@@ -167,10 +168,10 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			include_once $this->plugin_path() . '/includes/core/interfaces/service.php';
 			include_once $this->plugin_path() . '/includes/core/abstracts/service.php';
 			include_once $this->plugin_path() . '/includes/core/abstracts/query.php';
-			
+
 			// Controllers
 			include_once $this->plugin_path() . '/includes/controllers/abstracts/mvc-controller-registry.php';
-			
+
 			// Libraries
 			include_once $this->plugin_path() . '/libraries/league-csv/autoload.php';
 			spl_autoload_register( require $this->plugin_path() . '/libraries/json-machine/autoloader.php' );
@@ -178,7 +179,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 			// Other Libraries
 			include_once $this->plugin_path() . '/libraries/autoload.php';
 		}
-		
+
 		/**
 		 * Myabe include optional files.
 		 */
@@ -202,7 +203,7 @@ if ( ! class_exists( 'WP_MVC' ) ) :
 		{
 			return 2;
 		}
-		
+
 		/**
 		 * Get queue instance.
 		 *
