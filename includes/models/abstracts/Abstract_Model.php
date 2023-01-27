@@ -50,7 +50,7 @@ abstract class Abstract_Model
 			}
 		}
 	}
-	
+
 	public function get_property_keys()
 	{
 		return array_keys( $this->to_array() );
@@ -74,7 +74,9 @@ abstract class Abstract_Model
 	public function to_array( $exclude = array() )
 	{
 		$exclusions = wp_parse_args( $exclude, $this->get_hidden() );
-		return array_diff_key( get_object_vars( $this ), array_flip( $exclusions ) );
+		$vars = get_object_vars( $this );
+		array_walk( $vars, array( $this, 'deep_objects_to_array' ) );
+		return array_diff_key( $vars, array_flip( $exclusions ) );
 	}
 
 	public function to_json( $exclude = array(), $flags = 0 )
@@ -86,9 +88,28 @@ abstract class Abstract_Model
 	{
 		$include = empty( $include ) ? $this->get_property_keys() : $include;
 		$arr = $this->to_array();
-		return array_map( function( $key ) use ( $arr ) {
-			return is_array( $arr[ $key ] ) ? implode( '|', $arr[ $key ] ) : $arr[ $key ];
+		return array_map( function ( $key ) use ( $arr ) {
+			return is_array( $arr[$key] ) ? $this->deep_implode( '|', $arr[$key] ) : (string) $arr[$key];
 		}, $include );
+	}
+
+	private function deep_objects_to_array( &$value, $key )
+	{
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				if ( is_object( $v ) ) {
+					$value[$k] = $v->to_array();
+				}
+			}
+		}
+		return $value;
+	}
+
+	private function deep_implode( $separator, $data )
+	{
+		return implode( $separator, array_map( function ( $value ) use ( $separator ) {
+			return is_array( $value ) ? wp_json_encode( $value ) : $value;
+		}, $data ) );
 	}
 
 }
