@@ -5,6 +5,8 @@ namespace WP_MVC\Core\Abstracts;
 use \ArrayAccess;
 use \Countable;
 use \IteratorAggregate;
+use \Traversable;
+use \ArrayIterator;
 
 if ( ! defined( 'ABSPATH' ) )
 	exit;
@@ -170,7 +172,7 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 	 * @param  bool  $descending
 	 * @return $this
 	 */
-	public function sortBy( $callback, $options = SORT_REGULAR, $descending = false )
+	public function sort_by( $callback, $options = SORT_REGULAR, $descending = false )
 	{
 		$results = array();
 
@@ -194,7 +196,7 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 		return $this;
 	}
 
-	public function offsetSet( $offset, $value )
+	public function offsetSet( $offset, $value ): void
 	{
 		if ( is_null( $offset ) ) {
 			$this->items[] = $value;
@@ -203,27 +205,27 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 		}
 	}
 
-	public function offsetExists( $offset )
+	public function offsetExists( $offset ): bool
 	{
 		return isset( $this->items[$offset] );
 	}
 
-	public function offsetUnset( $offset )
+	public function offsetUnset( $offset ): void
 	{
 		unset( $this->items[$offset] );
 	}
 
-	public function offsetGet( $offset )
+	public function offsetGet( $offset ): mixed
 	{
 		return isset( $this->items[$offset] ) ? $this->items[$offset] : null;
 	}
 
-	public function getIterator()
+	public function getIterator(): Traversable
 	{
 		return new ArrayIterator( $this->items );
 	}
 
-	public function count()
+	public function count(): int
 	{
 		return count( $this->items );
 	}
@@ -233,7 +235,7 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 	 *
 	 * @return bool
 	 */
-	public function isEmpty()
+	public function is_empty()
 	{
 		return empty( $this->items );
 	}
