@@ -2,100 +2,103 @@
 
 namespace WP_MVC\Core\Abstracts;
 
-use \ArrayAccess;
-use \Countable;
-use \IteratorAggregate;
-use \Traversable;
-use \ArrayIterator;
+use ArrayAccess;
+use Countable;
+use IteratorAggregate;
+use Traversable;
+use ArrayIterator;
 
 if ( ! defined( 'ABSPATH' ) )
 	exit;
 
 abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 {
-	protected $items = array();
+	protected $items = [];
 
-	/**
-	 * Get all of the items in the collection.
-	 *
-	 * @return array
-	 */
 	public function all()
 	{
 		return $this->items;
 	}
 
-	/**
-	 * Remove an item from the collection by key.
-	 *
-	 * @param  mixed  $key
-	 * @return void
-	 */
 	public function forget( $key )
 	{
 		$this->offsetUnset( $key );
 	}
 
-	/**
-	 * Get an item from the collection by key.
-	 *
-	 * @param  mixed  $key
-	 * @param  mixed  $default
-	 * @return mixed
-	 */
 	public function get( $key, $default = null )
 	{
-		if ( $this->offsetExists( $key ) ) {
-			return $this->items[$key];
-		}
-		return $default;
+		return $this->offsetExists( $key ) ? $this->items[$key] : $default;
 	}
 
-	/**
-	 * Add item to the collection
-	 *
-	 * @param  mixed  $item
-	 * @return $this
-	 */
 	public function add( $item )
 	{
 		$this->items[] = $item;
 		return $this;
 	}
 
-	/**
-	 * Determine if an item exists in the collection by key.
-	 *
-	 * @param  mixed  $key
-	 * @return bool
-	 */
 	public function has( $key )
 	{
 		return $this->offsetExists( $key );
 	}
 
-	/**
-	 * Run a filter over each of the items.
-	 *
-	 * @param  callable  $callback
-	 * @return static
-	 */
 	public function filter( $callback )
 	{
-		return array_filter( $this->items, $callback );
+		$instance = new static;
+		$instance->items = array_filter( $this->items, $callback );
+		return $instance;
 	}
 
-	/**
-	 * Determine if an item exists in the collection.
-	 *
-	 * @param  mixed  $key
-	 * @param  mixed  $value
-	 * @return bool
-	 */
+	public function map( $callback )
+	{
+		$instance = new static;
+		$instance->items = array_map( $callback, $this->items );
+		return $instance;
+	}
+
+	public function values()
+	{
+		$instance = new static;
+		$instance->items = array_values( $this->items );
+		return $instance;
+	}
+
+	public function pluck( $key )
+	{
+		return array_map( function ( $item ) use ( $key ) {
+			return data_get( $item, $key );
+		}, $this->items );
+	}
+
+	public function keyBy( $key )
+	{
+		$results = [];
+
+		foreach ( $this->items as $item ) {
+			$results[data_get( $item, $key )] = $item;
+		}
+
+		$instance = new static;
+		$instance->items = $results;
+
+		return $instance;
+	}
+
+	public function groupBy( $key )
+	{
+		$results = [];
+
+		foreach ( $this->items as $item ) {
+			$groupKey = data_get( $item, $key );
+			$results[$groupKey][] = $item;
+		}
+
+		return $results;
+	}
+
 	public function contains( $key, $value = null )
 	{
 		if ( func_num_args() == 2 ) {
-			return $this->contains( function ( $k, $item ) use ( $key, $value ) {
+			return $this->contains( function ( $item ) use ( $key, $value ) {
 					return data_get( $item, $key ) == $value;
 				} );
 		}
@@ -107,92 +110,72 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 		return in_array( $key, $this->items );
 	}
 
-	/**
-	 * Filter items by the given key value pair.
-	 *
-	 * @param  string  $key
-	 * @param  mixed  $value
-	 * @param  bool  $strict
-	 * @return static
-	 */
 	public function where( $key, $value, $strict = true )
 	{
-		$result = $this->filter( function ( $item ) use ( $key, $value, $strict ) {
-			return $strict ? data_get( $item, $key ) === $value : data_get( $item, $key ) == $value;
-		} );
-
-		if ( count( $result ) === 1 )
-			return current( $result );
-
-		return $result;
+		return $this->filter( function ( $item ) use ( $key, $value, $strict ) {
+				return $strict ? data_get( $item, $key ) === $value : data_get( $item, $key ) == $value;
+			} );
 	}
 
-	/**
-	 * Search the collection for a given value and return the corresponding key if successful.
-	 *
-	 * @param  mixed  $value
-	 * @param  bool   $strict
-	 * @return mixed
-	 */
+	public function firstWhere( $key, $value, $strict = true )
+	{
+		foreach ( $this->items as $item ) {
+
+			$match = $strict ? data_get( $item, $key ) === $value : data_get( $item, $key ) == $value;
+
+			if ( $match ) {
+				return $item;
+			}
+		}
+
+		return null;
+	}
+
 	public function search( $value, $strict = false )
 	{
 		return array_search( $value, $this->items, $strict );
 	}
 
-	/**
-	 * Get the first item from the collection.
-	 *
-	 * @param  callable   $callback
-	 * @param  mixed      $default
-	 * @return mixed|null
-	 */
 	public function first( $callback = null, $default = null )
 	{
 		if ( is_null( $callback ) ) {
-			return count( $this->items ) > 0 ? reset( $this->items ) : null;
+			return count( $this->items ) ? reset( $this->items ) : $default;
 		}
-		return array_first( $this->items, $callback, $default );
+
+		foreach ( $this->items as $key => $item ) {
+			if ( $callback( $item, $key ) ) {
+				return $item;
+			}
+		}
+
+		return $default;
 	}
 
-	/**
-	 * Get the last item from the collection.
-	 *
-	 * @return mixed|null
-	 */
 	public function last()
 	{
-		return count( $this->items ) > 0 ? end( $this->items ) : null;
+		return count( $this->items ) ? end( $this->items ) : null;
 	}
 
-	/**
-	 * Sort the collection using the given callback.
-	 *
-	 * @param  callable|string  $callback
-	 * @param  int   $options
-	 * @param  bool  $descending
-	 * @return $this
-	 */
 	public function sort_by( $callback, $options = SORT_REGULAR, $descending = false )
 	{
-		$results = array();
+		$results = [];
 
 		if ( ! $this->useAsCallable( $callback ) ) {
 			$callback = $this->valueRetriever( $callback );
 		}
-		// First we will loop through the items and get the comparator from a callback
-		// function which we were given. Then, we will sort the returned values and
-		// and grab the corresponding values for the sorted keys from this array.
+
 		foreach ( $this->items as $key => $value ) {
 			$results[$key] = $callback( $value, $key );
 		}
+
 		$descending ? arsort( $results, $options ) : asort( $results, $options );
-		// Once we have sorted all of the keys in the array, we will loop through them
-		// and grab the corresponding model so we can set the underlying items list
-		// to the sorted version. Then we'll just return the collection instance.
+
 		foreach ( array_keys( $results ) as $key ) {
 			$results[$key] = $this->items[$key];
 		}
+
 		$this->items = $results;
+
 		return $this;
 	}
 
@@ -217,7 +200,7 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 
 	public function offsetGet( $offset ): mixed
 	{
-		return isset( $this->items[$offset] ) ? $this->items[$offset] : null;
+		return $this->items[$offset] ?? null;
 	}
 
 	public function getIterator(): Traversable
@@ -230,38 +213,20 @@ abstract class Factory implements ArrayAccess, Countable, IteratorAggregate
 		return count( $this->items );
 	}
 
-	/**
-	 * Determine if the collection is empty or not.
-	 *
-	 * @return bool
-	 */
 	public function is_empty()
 	{
 		return empty( $this->items );
 	}
 
-	/**
-	 * Determine if the given value is callable, but not a string.
-	 *
-	 * @param  mixed  $value
-	 * @return bool
-	 */
 	protected function useAsCallable( $value )
 	{
 		return ! is_string( $value ) && is_callable( $value );
 	}
 
-	/**
-	 * Get a value retrieving callback.
-	 *
-	 * @param  string  $value
-	 * @return \Closure
-	 */
 	protected function valueRetriever( $value )
 	{
 		return function ( $item ) use ( $value ) {
 			return data_get( $item, $value );
 		};
 	}
-
 }
